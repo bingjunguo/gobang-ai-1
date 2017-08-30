@@ -18,8 +18,10 @@ class ChessBoard
 public:
 	ChessBoard();
 	~ChessBoard();
-	void initChessBoard(); //初始化棋盘
-	
+	void _initChessBoard();  //初始化棋盘
+	void _initChessScore();  //初始化分数
+	bool hasNeighbor();		 //是否有邻居
+	int scorePoint(); 		 //计算分数
 };
 
 #endif
