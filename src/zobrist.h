@@ -1,7 +1,7 @@
 #ifndef _ZOBRIST_H_
 #define _ZOBRIST_H_
 
-#include "globalstruct.h"
+#include "globalstructs.h"
 
 class Zobrist
 {
@@ -11,11 +11,11 @@ class Zobrist
 public:
 	Zobrist()
 	{
-		for(var i=0;i<BOARD_SIZE*BOARD_SIZE;i++) {
-    		this.m_com[i] = this._rand();
-    		this.m_hum[i] = this._rand();
+		for(int i=0;i<BOARD_SIZE*BOARD_SIZE;i++) {
+    		this->m_com[i] = this->_rand();
+    		this->m_hum[i] = this->_rand();
   		}
-  		this.m_code = this._rand();
+  		this->m_code = this->_rand();
 	}
 	~Zobrist();
 	int _rand()
@@ -26,8 +26,8 @@ public:
 	}
 	int go(int x, int y, int role) {
 		int index = BOARD_SIZE * x + y;
-		this.code ^= (role == ROLE.com ? this.m_com[index] : this.m_hum[index]);
-		return this.code;
+		this->m_code ^= (role == COM ? this->m_com[index] : this->m_hum[index]);
+		return this->m_code;
 
 	}
 	

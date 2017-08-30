@@ -1,8 +1,9 @@
 #ifndef _CHESSBOARD_H_
 #define _CHESSBOARD_H_
 
+#include <list>
 #include "zobrist.h"
-
+using namespace std;  
 
 typedef list<Pos> Step; 
 
@@ -17,7 +18,7 @@ class ChessBoard
 public:
 	ChessBoard();
 	~ChessBoard();
-	initChessBoard(); //初始化棋盘
+	void initChessBoard(); //初始化棋盘
 	
 };
 

@@ -25,11 +25,11 @@ enum ROLE
 	EMPTY = 0,
 	HUM = 1,
 	COM = 2,
-}ROLE;
+};
 
 inline bool reverse(int role)
 {
-   return role == ROLE.HUM ? ROLE.COM : ROLE.HUM;
+   return role == HUM ? COM : HUM;
 }
 
 typedef struct Position
