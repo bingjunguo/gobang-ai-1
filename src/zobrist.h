@@ -1,3 +1,8 @@
+#ifndef _ZOBRIST_H_
+#define _ZOBRIST_H_
+
+#include "globalstruct.h"
+
 class Zobrist
 {
 	int m_com[BOARD_SIZE*BOARD_SIZE];
@@ -27,3 +32,5 @@ public:
 	}
 	
 };
+
+#endif
