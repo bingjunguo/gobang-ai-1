@@ -20,8 +20,11 @@ public:
 	~ChessBoard();
 	void _initChessBoard();  //初始化棋盘
 	void _initChessScore();  //初始化分数
-	bool hasNeighbor();		 //是否有邻居
-	int scorePoint(); 		 //计算分数
+	bool hasNeighbor(Pos pos, int distance, int count);		 //是否有邻居
+	int scorePoint(Pos pos,int role); 		 //计算分数
+	int countToType(int count, int block, int empty);
+	int typeToScore(int chessType);
+	void updateScore(Pos pos);
 };
 
 #endif
