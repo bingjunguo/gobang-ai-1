@@ -57,7 +57,7 @@ void ChessBoard::_initChessScore()
 }
 void ChessBoard::updateScore(Pos pos)
 {
-	int radius = 8,
+	int radius = 8;
 	int len = BOARD_SIZE;
 
 	/*function update(x, y) {
@@ -66,8 +66,8 @@ void ChessBoard::updateScore(Pos pos)
 	self.comScore[x][y] = cs;
 	self.humScore[x][y] = hs;
 	//注意下面这样写是错的！因为很可能最高分已经没了，不是总是取最高分的，这样分数会越来越高的。所以改成每次遍历计算
-	/*self.comMaxScore = Math.max(cs, self.comMaxScore);
-	self.humMaxScore = Math.max(hs, self.humMaxScore);
+	//self.comMaxScore = Math.max(cs, self.comMaxScore);
+	//self.humMaxScore = Math.max(hs, self.humMaxScore);
 	}*/
   // -
 	for(int i = -radius;i < radius;i++) 
@@ -78,8 +78,8 @@ void ChessBoard::updateScore(Pos pos)
 		if(m_board[x][y] != EMPTY) 
 			continue;
 		Pos pos; pos.x = x; pos.y = y;
-		self.comScore[x][y] = scorePoint(pos, R.com);
-		self.humScore[x][y] = scorePoint(pos, R.hum);
+		m_comScore[x][y] = scorePoint(pos, COM);
+		m_humScore[x][y] = scorePoint(pos, HUM);
 	}
 
 	// |
@@ -93,8 +93,8 @@ void ChessBoard::updateScore(Pos pos)
 		if(m_board[x][y] != EMPTY) 
 			continue;
 		Pos pos; pos.x = x; pos.y = y;
-		self.comScore[x][y] = scorePoint(pos, R.com);
-		self.humScore[x][y] = scorePoint(pos, R.hum);
+		m_comScore[x][y] = scorePoint(pos, COM);
+		m_humScore[x][y] = scorePoint(pos, HUM);
 	}
 
 	// \  -
@@ -109,8 +109,8 @@ void ChessBoard::updateScore(Pos pos)
 		if(m_board[x][y] != EMPTY) 
 			continue;
 		Pos pos; pos.x = x; pos.y = y;
-		self.comScore[x][y] = scorePoint(pos, R.com);
-		self.humScore[x][y] = scorePoint(pos, R.hum);
+		m_comScore[x][y] = scorePoint(pos, COM);
+		m_humScore[x][y] = scorePoint(pos, HUM);
 	}
 
 	// /
@@ -121,8 +121,8 @@ void ChessBoard::updateScore(Pos pos)
 		if(m_board[x][y] != EMPTY) 
 			continue;
 		Pos pos; pos.x = x; pos.y = y;
-		self.comScore[x][y] = scorePoint(pos, R.com);
-		self.humScore[x][y] = scorePoint(pos, R.hum);
+		m_comScore[x][y] = scorePoint(pos, COM);
+		m_humScore[x][y] = scorePoint(pos, HUM);
 	}
   //通过遍历来计算最高分
 }
@@ -144,7 +144,7 @@ bool ChessBoard::hasNeighbor(Pos pos, int distance, int count)
 				continue;
 			if(i == pos.x && j == pos.y) 
 				continue;
-			if(board[i][j] != EMPTY) 
+			if(m_board[i][j] != EMPTY) 
 			{
 				count --;
 				if(count <= 0) 
@@ -158,9 +158,8 @@ bool ChessBoard::hasNeighbor(Pos pos, int distance, int count)
 int ChessBoard::scorePoint(Pos pos,int role)
 {
 	int result = 0;
-	int count = 0, block = 0,
-	secondCount = 0;  //另一个方向的count
-
+	int count = 0, block = 0,empty = 0,secondCount = 0;  //另一个方向的count
+	
 	int len = BOARD_SIZE;
 
 	count = 1;
@@ -176,7 +175,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[pos.x][i];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && i < len-1 && m_board[pos.x][i+1] == role) 
 			{
@@ -188,7 +187,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role) 
+		if(t == role) 
 		{
 			count ++;
 			continue;
@@ -209,7 +208,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[pos.x][i];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && i>0 && m_board[pos.x][i-1] == role) 
 			{
@@ -221,7 +220,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role)
+		if(t == role)
 		{
 			secondCount ++;
 			//empty !== -1 && empty ++;  //注意这里，如果左边又多了己方棋子，那么empty的位置就变大了
@@ -253,7 +252,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[i][pos.y];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && i<len-1 && m_board[i+1][pos.y] == role) 
 			{
@@ -265,7 +264,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role) 
+		if(t == role) 
 		{
 			count ++;
 			continue;
@@ -285,7 +284,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[i][pos.y];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && i > 0 && m_board[i-1][pos.y] == role) 
 			{
@@ -297,7 +296,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role) 
+		if(t == role) 
 		{
 			secondCount++;
 			//empty !== -1 && empty ++;  //注意这里，如果左边又多了己方棋子，那么empty的位置就变大了
@@ -331,7 +330,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[x][y];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && (x<len-1 && y < len-1) && m_board[x+1][y+1] == role) 
 			{
@@ -343,7 +342,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role) 
+		if(t == role) 
 		{
 			count ++;
 			continue;
@@ -363,7 +362,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[x][y];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && (x>0 && y>0) && m_board[x-1][y-1] == role) 
 			{
@@ -375,10 +374,12 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role) 
+		if(t == role) 
 		{
 			secondCount ++;
-			empty !== -1 && empty ++;  //注意这里，如果左边又多了己方棋子，那么empty的位置就变大了
+			//empty !== -1 && empty ++;  //注意这里，如果左边又多了己方棋子，那么empty的位置就变大了
+			if (empty != -1)
+				empty++;			
 			continue;
 		} 
 		else 
@@ -407,7 +408,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[x][y];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && (x<len-1 && y<len-1) && m_board[x+1][y-1] == role) 
 			{
@@ -417,7 +418,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role) 
+		if(t == role) 
 		{
 			count ++;
 			continue;
@@ -436,7 +437,7 @@ int ChessBoard::scorePoint(Pos pos,int role)
 			break;
 		}
 		int t = m_board[x][y];
-		if(t === EMPTY) 
+		if(t == EMPTY) 
 		{
 			if(empty == -1 && (x>0 && y>0) && m_board[x-1][y+1] == role)
 			{
@@ -446,10 +447,12 @@ int ChessBoard::scorePoint(Pos pos,int role)
 				break;
 			}
 		}
-		if(t === role) 
+		if(t == role) 
 		{
 			secondCount++;
-			empty !== -1 && empty ++;  //注意这里，如果左边又多了己方棋子，那么empty的位置就变大了
+			//empty != -1 && empty ++;  //注意这里，如果左边又多了己方棋子，那么empty的位置就变大了
+			if (empty != -1)
+				empty++;			
 			continue;
 		} else {
 			block ++;
@@ -474,7 +477,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 	{
 		if(count >= 5) 
 			return FIVE;
-		if(block === 0) 
+		if(block == 0) 
 		{
 			switch(count) 
 			{
@@ -485,7 +488,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 1) 
+		if(block == 1) 
 		{
 			switch(count) 
 			{
@@ -496,13 +499,13 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-	} else if(empty === 1 || empty == count-1) {
+	} else if(empty == 1 || empty == count-1) {
 		//第1个是空位
 		if(count >= 6) 
 		{
 			return FIVE;
 		}
-		if(block === 0) 
+		if(block == 0) 
 		{
 			switch(count) 
 			{
@@ -513,7 +516,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 1) 
+		if(block == 1) 
 		{
 			switch(count) 
 			{
@@ -523,13 +526,13 @@ int ChessBoard::countToType(int count, int block, int empty)
 				case 5: return BLOCKED_FOUR;
 			}
 		}
-	} else if(empty === 2 || empty == count-2) {
+	} else if(empty == 2 || empty == count-2) {
 	//第二个是空位
 		if(count >= 7) 
 		{
 			return FIVE;
 		}
-		if(block === 0) 
+		if(block == 0) 
 		{
 			switch(count) 
 			{
@@ -540,7 +543,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 1) 
+		if(block == 1) 
 		{
 			switch(count) 
 			{
@@ -551,7 +554,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 2) 
+		if(block == 2) 
 		{
 			switch(count) 
 			{
@@ -560,12 +563,12 @@ int ChessBoard::countToType(int count, int block, int empty)
 				case 6: return BLOCKED_FOUR;
 			}
 		}
-	} else if(empty === 3 || empty == count-3) {
+	} else if(empty == 3 || empty == count-3) {
 		if(count >= 8) 
 		{
 			return FIVE;
 		}
-		if(block === 0) 
+		if(block == 0) 
 		{
 			switch(count) 
 			{
@@ -576,7 +579,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 1) 
+		if(block == 1) 
 		{
 			switch(count) 
 			{
@@ -587,7 +590,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 2) 
+		if(block == 2) 
 		{
 			switch(count) 
 			{
@@ -597,13 +600,13 @@ int ChessBoard::countToType(int count, int block, int empty)
 				case 7: return BLOCKED_FOUR;
 			}
 		}
-	} else if(empty === 4 || empty == count-4) 
+	} else if(empty == 4 || empty == count-4) 
 	{
 		if(count >= 9) 
 		{
 			return FIVE;
 		}
-		if(block === 0) 
+		if(block == 0) 
 		{
 			switch(count) 
 			{
@@ -614,7 +617,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 1) 
+		if(block == 1) 
 		{
 			switch(count) 
 			{
@@ -626,7 +629,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			}
 		}
 
-		if(block === 2) 
+		if(block == 2) 
 		{
 			switch(count) 
 			{
@@ -636,7 +639,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 				case 8: return BLOCKED_FOUR;
 			}
 		}
-	} else if(empty === 5 || empty == count-5) {
+	} else if(empty == 5 || empty == count-5) {
 		return FIVE;
 	}
 
