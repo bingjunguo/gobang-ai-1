@@ -14,7 +14,7 @@ typedef map<int,int> EvaluateCacheMap;
 class ChessBoard
 {
 	int m_board[BOARD_SIZE][BOARD_SIZE];
-	ListPos m_step;
+	ListPos m_steps;
 	Zobrist  m_zobrist;
 	EvaluateCacheMap m_evaluateCache;  //棋面估分缓存
 
@@ -32,7 +32,7 @@ public:
 	bool remove(Pos p);		    //移除棋子
 	bool back();                //悔棋   
 	int isWin();				//赢了嘛 0 没有 返回角色
-	bool isFive(Pos pos);       //这个点是否练成了五子    
+	bool isFive(Pos pos,int role);       //这个点是否练成了五子    
 
 	bool hasNeighbor(Pos pos, int distance, int count);		 //是否有邻居
 	int scorePoint(Pos pos,int role); 		 //计算分数

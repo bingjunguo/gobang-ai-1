@@ -8,7 +8,7 @@ ChessBoard::ChessBoard()
 	Pos pos;
 	pos.x = 7; pos.y = 7;
 
-	put(pos, COM)
+	put(pos, COM);
 	m_zobrist.go(pos.x, pos.y, COM);
 
 	_initChessScore();
@@ -70,7 +70,7 @@ bool ChessBoard::put(Pos p, int role)
 	m_board[p.x][p.y] = role;
 	m_zobrist.go(p.x, p.y, role);
 	updateScore(p);
-	m_step.push_back(p);
+	m_steps.push_back(p);
 	return true;
 }
 bool ChessBoard::remove(Pos p)
@@ -84,23 +84,23 @@ bool ChessBoard::remove(Pos p)
 bool ChessBoard::back()
 {
 	//当然要退两步
-	if(m_step.size() < 2) 
+	if(m_steps.size() < 2) 
 		return false;
 	Pos pos = m_steps.back();
 	m_steps.pop_back();
 	m_zobrist.go(pos.x, pos.y, m_board[pos.x][pos.y]);
-	board[pos.x][pos.y] = EMPTY;
-	updateScore(s);
+	m_board[pos.x][pos.y] = EMPTY;
+	updateScore(pos);
 	
 	pos = m_steps.back();
 	m_steps.pop_back();
-	m_zobrist.go(pos.x, pos.y, board[pos.x][pos.y]);
-	board[pos.x][pos.y] = EMPTY;
-	updateScore(s);
+	m_zobrist.go(pos.x, pos.y, m_board[pos.x][pos.y]);
+	m_board[pos.x][pos.y] = EMPTY;
+	updateScore(pos);
 
 	return true;
 }
-bool ChessBoard::isWin()
+int ChessBoard::isWin()
 {
 	for(int i = 0;i < BOARD_SIZE; i++) 
 	{
@@ -185,8 +185,8 @@ int ChessBoard::evaluate(int role)
 	if(m_evaluateCache[m_zobrist.getCode()]) 
 		return m_evaluateCache[m_zobrist.getCode()];
 
-	m_comMaxScore = - S.FIVE;
-	m_humMaxScore = - S.FIVE;
+	m_comMaxScore = - FIVE;
+	m_humMaxScore = - FIVE;
 
 	//遍历出最高分，开销不大
 	for(int i = 0;i < BOARD_SIZE; i++) 
@@ -215,7 +215,7 @@ ListPos ChessBoard::gen()
 	ListPos twos;
 	ListPos neighbors;
 
-	listpos ret;
+	ListPos ret;
 
 	for(int i = 0;i < BOARD_SIZE; i++) 
 	{
@@ -252,7 +252,7 @@ ListPos ChessBoard::gen()
 					} else if(scoreCom >= THREE) {
 						threes.push_front(pos);
 					} else if(scoreHum >= THREE) {
-						threes.push([i, j]);
+						threes.push_back(pos);
 					} else if(scoreCom >= TWO) {
 						twos.push_front(pos);
 					} else if(scoreHum >= TWO) {
@@ -864,7 +864,7 @@ int ChessBoard::typeToScore(int chessType)
 	}
 	return chessType;
 }
-bool ChessBoard::isFive(Pos pos)
+bool ChessBoard::isFive(Pos pos,int role)
 {
 	int len = BOARD_SIZE;
 	int count = 1;
@@ -873,7 +873,7 @@ bool ChessBoard::isFive(Pos pos)
 	{
 		if(i >= len) 
 			break;
-		int t = board[pos.x][i];
+		int t = m_board[pos.x][i];
 		if(t != role) 
 			break;
 		count ++;
@@ -884,8 +884,8 @@ bool ChessBoard::isFive(Pos pos)
 	{
 		if(i < 0) 
 			break;
-		int t = board[pos.x][i];
-		if(t !== role) 
+		int t = m_board[pos.x][i];
+		if(t != role) 
 			break;
 			count ++;
 	}
@@ -902,7 +902,7 @@ bool ChessBoard::isFive(Pos pos)
 		{
 			break;
 		}
-		int t = board[i][pos.y];
+		int t = m_board[i][pos.y];
 		if(t != role) 
 			break;
 		count ++;
@@ -914,7 +914,7 @@ bool ChessBoard::isFive(Pos pos)
 		{
 			break;
 		}
-		int t = board[i][pos.y];
+		int t = m_board[i][pos.y];
 		if(t !== role) 
 			break;
 		count ++;
@@ -933,7 +933,7 @@ bool ChessBoard::isFive(Pos pos)
 		{
 			break;
 		}
-		int t = board[x][y];
+		int t = m_board[x][y];
 		if(t != role)
 		 break;
 
@@ -947,7 +947,7 @@ bool ChessBoard::isFive(Pos pos)
 		{
 			break;
 		}
-		int t = board[x][y];
+		int t = m_board[x][y];
 		if(t != role) 
 			break;
 		count ++;
@@ -965,7 +965,7 @@ bool ChessBoard::isFive(Pos pos)
 		{
 			break;
 		}
-		int t = board[x][y];
+		int t = m_board[x][y];
 		if(t != role) 
 			break;
 		count ++;
@@ -978,7 +978,7 @@ bool ChessBoard::isFive(Pos pos)
 		{
 			break;
 		}
-		int t = board[x][y];
+		int t = m_board[x][y];
 		if(t != role) 
 			break;
 		count ++;
