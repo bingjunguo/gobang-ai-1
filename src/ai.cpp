@@ -294,7 +294,7 @@ int AI::checkmateMax(int role,int deep)
 	for(int i = 0;i < points.size();i++) 
 	{
 		DeeppingRet dr = points.front();
-		points.pop_front()
+		points.pop_front();
 		Pos p = dr.pos;
 
 		m_chessBoard.put(p, role);
@@ -405,12 +405,12 @@ DeeppingRetList AI::checkmateFindMax(int role,int score)
 					if(s >= FIVE) 
 					{
 						result.clear();
-						result.push(p);
+						result.push_back(dr);
 						return result;
 					}
 					if(s >= score) 
 					{
-						result.push(p);
+						result.push_back(dr);
 					}
 				}
 			}
