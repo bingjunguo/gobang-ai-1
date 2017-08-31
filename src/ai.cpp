@@ -1,7 +1,10 @@
 #include "ai.h"
+#include "aimath.h"
 #include <iostream>
 #include <math.h>
+
 using namespace std; 
+
 AI::AI()
 {
 	total = 0; steps = 0;
@@ -63,14 +66,14 @@ DeeppingRet AI::maxmin(int deep)
 		{
 		  	v = 0.5 * v;
 		}
-		cout<<"v = "<<v<<" pos["<<pos.x<<","<<pos.y<<"]"<<endl;
+		cout<<"v = "<<v<<" pos["<<p.x<<","<<p.y<<"]"<<endl;
 		//如果跟之前的一个好，则把当前位子加入待选位子
 		if(AIMath::equal(v, best)) 
 		{
 		  	bestPoints.push_back(p);
 		}
 		//找到一个更好的分，就把以前存的位子全部清除
-		if(math.greatThan(v, best)) 
+		if(AIMath::greatThan(v, best)) 
 		{
 			best = v;
 			bestPoints.clear();
@@ -79,8 +82,23 @@ DeeppingRet AI::maxmin(int deep)
 		m_chessBoard.remove(p);
 	}
 	//cout<<"score:"<<best<<"  points :bestPoints"<<endl
-	srand(((unsigned int))time(NULL));
-	Pos p = bestPoints[floor(bestPoints.size() * (double)rand() / RAND_MAX)];
+	srand((unsigned int)time(NULL));
+
+	//Pos p = bestPoints[floor(bestPoints.size() * (double)rand() / RAND_MAX)];
+	int rd = floor(bestPoints.size() * (double)rand() / RAND_MAX);
+	if(rd == bestPoints.size())
+		rd = rd - 1;
+	int i = 0;
+	Pos p;
+	for(ListPos::iterator it = bestPoints.begin(); it != bestPoints.end(); ++it)
+	{
+		if(i == rd)
+		{
+			p = *it;
+			break;
+		}
+		i++;
+	}
 	DeeppingRet result;
 	result.score = best;
 	result.pos = p;
@@ -99,9 +117,9 @@ int AI::max(int deep,int alpha,int beta,int role)
 {
 	if(CACHE) 
 	{
-		AICache c = m_cache[m_chessBoard.getZobrist().getCode()];
-		if(c == NULL) 
+		if(m_cache.count(m_chessBoard.getZobrist().getCode()) > 0)
 		{
+			AICache c = m_cache[m_chessBoard.getZobrist().getCode()];
 			if(c.deep >= deep) 
 			{
 				cacheGet ++;
@@ -121,7 +139,8 @@ int AI::max(int deep,int alpha,int beta,int role)
 
 	for(int i = 0;i < points.size();i++) 
 	{
-		Pos p = points[i];
+		Pos p = points.front();
+		points.pop_front();
 		m_chessBoard.put(p, role);
 
 		int v = - max(deep-1, -beta, -1 *( best > alpha ? best : alpha), reverse(role)) * DEEP_DECREASE;
@@ -141,11 +160,11 @@ int AI::max(int deep,int alpha,int beta,int role)
 	}
 	if((deep == 2 || deep == 3 ) && AIMath::littleThan(best, THREE*2) && AIMath::greatThan(best, THREE * -1)) 
 	{
-		int mate = checkmateFast(m_chessBoard.board, role, CHECKMATE_DEEP,false);
+		int mate = checkmateFast(role, CHECKMATE_DEEP,false);
 		if(mate > 0) 
 		{
 			//int score = mate.score * Math.pow(0.8, mate.length) * (role === R.com ? 1 : -1);
-			int score = mate * 0.8 * (role === R.com ? 1 : -1);
+			int score = mate * 0.8 * (role == COM ? 1 : -1);
 			cacheMaxmin(deep, score);
 			return score;
 		}
@@ -155,13 +174,13 @@ int AI::max(int deep,int alpha,int beta,int role)
 	return best;
 }
 
-void cacheMaxmin(int deep, int score)
+void AI::cacheMaxmin(int deep, int score)
 {
 	if(!CACHE) 
 		return;
 	AICache cache;
 	cache.deep = deep;
 	cache.score = score;
-  	m_cache[m_chessBoard.getZobrist().getCode()] = cache
+  	m_cache[m_chessBoard.getZobrist().getCode()] = cache;
     cacheCount ++;
 }

@@ -73,5 +73,5 @@ public:
 	bool checkmateMax(int role,int deep);
 	bool checkmateFindMin(int role,int score);
 	bool checkmateFindMax(int role,int score);
-
+};
 #endif
