@@ -2,6 +2,9 @@
 #define _ZOBRIST_H_
 
 #include "globalstructs.h"
+#include <time.h> 
+#include <stdlib.h>
+#include <math.h>
 
 class Zobrist
 {
@@ -22,13 +25,18 @@ public:
 	{
 		//return Math.floor(Math.random() * 1000000000);  //再多一位就溢出了。。
 		//这里需要改一下
-		return 1;
+		srand(((unsigned int))time(NULL));     //每次执行种子不同，生成不同的随机数
+		return floor(1000000000 * (double)rand() / RAND_MAX);
 	}
 	int go(int x, int y, int role) {
 		int index = BOARD_SIZE * x + y;
 		this->m_code ^= (role == COM ? this->m_com[index] : this->m_hum[index]);
 		return this->m_code;
 
+	}
+	int getCode()
+	{
+		return this->m_code;
 	}
 	
 };

@@ -5,8 +5,12 @@ ChessBoard::ChessBoard()
 {
 	_initChessBoard();
 	//默认黑先走
-	m_board[7][7] = COM;
-	m_zobrist.go(7, 7, COM);
+	Pos pos;
+	pos.x = 7; pos.y = 7;
+
+	put(pos, COM)
+	m_zobrist.go(pos.x, pos.y, COM);
+
 	_initChessScore();
 }
 
@@ -27,6 +31,9 @@ void ChessBoard::_initChessBoard()
 }
 void ChessBoard::_initChessScore()
 {
+	m_comMaxScore = - FIVE;
+	m_humMaxScore = - FIVE;
+
 	for (int i = 0; i < BOARD_SIZE; ++i)
 	{
 		for (int j = 0; j < BOARD_SIZE; ++j)
@@ -55,21 +62,67 @@ void ChessBoard::_initChessScore()
   	}
 	return;
 }
+
+bool ChessBoard::put(Pos p, int role)
+{
+	if (m_board[p.x][p.y] != EMPTY)
+		return false;
+	m_board[p.x][p.y] = role;
+	m_zobrist.go(p.x, p.y, role);
+	updateScore(p);
+	m_step.push_back(p);
+	return true;
+}
+bool ChessBoard::remove(Pos p)
+{
+	int role = m_board[p.x][p.y];
+	m_zobrist.go(p.x, p.y, role);
+	m_board[p.x][p.y] = EMPTY;
+	updateScore(p);
+	return true;
+}
+bool ChessBoard::back()
+{
+	//当然要退两步
+	if(m_step.size() < 2) 
+		return false;
+	Pos pos = m_steps.back();
+	m_steps.pop_back();
+	m_zobrist.go(pos.x, pos.y, m_board[pos.x][pos.y]);
+	board[pos.x][pos.y] = EMPTY;
+	updateScore(s);
+	
+	pos = m_steps.back();
+	m_steps.pop_back();
+	m_zobrist.go(pos.x, pos.y, board[pos.x][pos.y]);
+	board[pos.x][pos.y] = EMPTY;
+	updateScore(s);
+
+	return true;
+}
+bool ChessBoard::isWin()
+{
+	for(int i = 0;i < BOARD_SIZE; i++) 
+	{
+		for(int j = 0;j < BOARD_SIZE; j++) 
+		{
+			int role = m_board[i][j];
+			if(role != EMPTY) 
+			{
+				Pos pos; pos.x = i; pos.y = j;
+				int r = isFive(pos, role);
+				if(role > 0) 
+					return role;
+			}
+		}
+	}
+	return 0;
+}
 void ChessBoard::updateScore(Pos pos)
 {
 	int radius = 8;
 	int len = BOARD_SIZE;
 
-	/*function update(x, y) {
-	int cs = scorePoint(board, [x,y], R.com);
-	int hs = scorePoint(board, [x,y], R.hum);
-	self.comScore[x][y] = cs;
-	self.humScore[x][y] = hs;
-	//注意下面这样写是错的！因为很可能最高分已经没了，不是总是取最高分的，这样分数会越来越高的。所以改成每次遍历计算
-	//self.comMaxScore = Math.max(cs, self.comMaxScore);
-	//self.humMaxScore = Math.max(hs, self.humMaxScore);
-	}*/
-  // -
 	for(int i = -radius;i < radius;i++) 
 	{
 		int x = pos.x, y = pos.y+i;
@@ -126,7 +179,152 @@ void ChessBoard::updateScore(Pos pos)
 	}
   //通过遍历来计算最高分
 }
+int ChessBoard::evaluate(int role)
+{
+	//这里加了缓存，但是并没有提升速度
+	if(m_evaluateCache[m_zobrist.getCode()]) 
+		return m_evaluateCache[m_zobrist.getCode()];
 
+	m_comMaxScore = - S.FIVE;
+	m_humMaxScore = - S.FIVE;
+
+	//遍历出最高分，开销不大
+	for(int i = 0;i < BOARD_SIZE; i++) 
+	{
+		for(int j = 0;j < BOARD_SIZE; j++) 
+		{
+			if(m_board[i][j] == EMPTY) 
+			{
+				m_comMaxScore = MAX_AB(m_comScore[i][j], m_comMaxScore);
+				m_humMaxScore = MAX_AB(m_humScore[i][j], m_humMaxScore);
+			}
+		}
+	}
+	int result = (role == COM ? 1 : -1) * (m_comMaxScore - m_humMaxScore);
+	m_evaluateCache[m_zobrist.getCode()] = result;
+
+	return result;
+}
+ListPos ChessBoard::gen()
+{
+	ListPos fives;
+	ListPos fours;
+	ListPos blockedfours;
+	ListPos twothrees;
+	ListPos threes;
+	ListPos twos;
+	ListPos neighbors;
+
+	listpos ret;
+
+	for(int i = 0;i < BOARD_SIZE; i++) 
+	{
+		for(int j = 0;j < BOARD_SIZE; j++) 
+		{
+			if(m_board[i][j] == EMPTY) 
+			{
+				Pos pos;pos.x = i;pos.y = j;
+				if(hasNeighbor(pos, 2, 2)) //必须是有邻居的才行
+				{ 
+					int scoreHum = m_humScore[i][j];
+					int scoreCom = m_comScore[i][j];
+
+					if(scoreCom >= FIVE) 
+					{//先看电脑能不能连成5
+						ret.push_back(pos);
+						return ret;
+					} else if(scoreHum >= FIVE) {//再看玩家能不能连成5
+					//别急着返回，因为遍历还没完成，说不定电脑自己能成五。
+						fives.push_back(pos);
+					} else if(scoreCom >= FOUR) {
+						fours.push_front(pos);
+					} else if(scoreHum >= FOUR) {
+						fours.push_back(pos);
+					} else if(scoreCom >= BLOCKED_FOUR) {
+						blockedfours.push_front(pos);
+					} else if(scoreHum >= BLOCKED_FOUR) {
+						blockedfours.push_back(pos);
+					} else if(scoreCom >= 2 * THREE) {
+						//能成双三也行
+						twothrees.push_front(pos);
+					} else if(scoreHum >= 2 * THREE) {
+						twothrees.push_back(pos);
+					} else if(scoreCom >= THREE) {
+						threes.push_front(pos);
+					} else if(scoreHum >= THREE) {
+						threes.push([i, j]);
+					} else if(scoreCom >= TWO) {
+						twos.push_front(pos);
+					} else if(scoreHum >= TWO) {
+						twos.push_front(pos);
+					} else {
+						neighbors.push_front(pos);
+					}
+				}
+			}
+		}
+	}
+
+	//如果成五，是必杀棋，直接返回
+	if(fives.size() > 0) 
+	{
+		ret.push_back(fives.front())
+		return ret;
+	}
+
+	//注意一个活三可以有两个位置形成活四，但是不能只考虑其中一个，要从多个中考虑更好的选择
+	//所以不能碰到活四就返回第一个，应该需要考虑多个
+	if(fours.size() > 0) 
+	{	
+		return fours;
+	}
+	//冲四活三
+	if(blockedfours.size() > 0) 
+	{
+		ret.push_back(blockedfours.front())
+		return ret;
+	}
+	//双三很特殊，因为能形成双三的不一定比一个活三强
+	if(twothrees.size() > 0) 
+	{
+		for (ListPos::iterator  i = threes.begin(); i != threes.end(); ++i)
+		{
+			twothrees.push_back(*i);
+		}
+		return twothrees;
+	}
+
+	if(twos.size() > 0) 
+	{
+		for (ListPos::iterator  i = twos.begin(); i != twos.end(); ++i)
+		{
+			threes.push_back(*i);
+		}
+	}
+	if(neighbors.size() > 0) 
+	{
+		for (ListPos::iterator  i = neighbors.begin(); i != neighbors.end(); ++i)
+		{
+			threes.push_back(*i);
+		}
+	}
+
+	if(threes.size() > COUNTLIMIT) 
+	{
+		int count = 0;
+		for (ListPos::iterator  i = threes.begin(); i != threes.end(); ++i)
+		{
+			ret.push_back(*i);
+			count++;
+			if (count >= COUNTLIMIT)
+			{
+				break;
+			}
+		}
+	}
+
+	return ret;
+}
 bool ChessBoard::hasNeighbor(Pos pos, int distance, int count)
 {
 	int len = BOARD_SIZE;
@@ -665,4 +863,129 @@ int ChessBoard::typeToScore(int chessType)
 		}
 	}
 	return chessType;
+}
+bool ChessBoard::isFive(Pos pos)
+{
+	int len = BOARD_SIZE;
+	int count = 1;
+
+	for(int i = pos.y + 1;true;i++) 
+	{
+		if(i >= len) 
+			break;
+		int t = board[pos.x][i];
+		if(t != role) 
+			break;
+		count ++;
+	}
+
+
+	for(int i = pos.y - 1;true;i--) 
+	{
+		if(i < 0) 
+			break;
+		int t = board[pos.x][i];
+		if(t !== role) 
+			break;
+			count ++;
+	}
+
+	if(count >= 5) 
+		return true;
+
+	//纵向
+	count = 1;
+
+	for(int i = pos.x + 1;true;i++) 
+	{
+		if(i >= len) 
+		{
+			break;
+		}
+		int t = board[i][pos.y];
+		if(t != role) 
+			break;
+		count ++;
+	}
+
+	for(int i = pos.x - 1;true;i--)
+	{
+		if(i < 0) 
+		{
+			break;
+		}
+		int t = board[i][pos.y];
+		if(t !== role) 
+			break;
+		count ++;
+	}
+
+	if(count >= 5) 
+		return true;
+
+	// \\-
+	count = 1;
+
+	for(int i = 1;true;i++) 
+	{
+		int x = pos.x + i, y = pos.y + i;
+		if(x >= len || y >= len) 
+		{
+			break;
+		}
+		int t = board[x][y];
+		if(t != role)
+		 break;
+
+		count ++;
+	}
+
+	for(int i = 1;true;i++) 
+	{
+		int x = pos.x-i, y = pos.y-i;
+		if(x < 0|| y <0) 
+		{
+			break;
+		}
+		int t = board[x][y];
+		if(t != role) 
+			break;
+		count ++;
+	}
+
+	if(count >= 5) return true;
+
+	// \/
+	count = 1;
+
+	for(int i = 1; true;i++) 
+	{
+		int x = pos.x + i, y = pos.y - i;
+		if(x < 0||y < 0||x >= len||y >= len) 
+		{
+			break;
+		}
+		int t = board[x][y];
+		if(t != role) 
+			break;
+		count ++;
+	}
+
+	for(int i = 1;true;i++) 
+	{
+		int x = pos.x - i, y = pos.y + i;
+		if(x < 0||y < 0||x >= len||y >= len) 
+		{
+			break;
+		}
+		int t = board[x][y];
+		if(t != role) 
+			break;
+		count ++;
+	}
+
+	if(count >= 5) 
+		return true;
+
+	return false;
 }
