@@ -268,7 +268,7 @@ ListPos ChessBoard::gen()
 	//如果成五，是必杀棋，直接返回
 	if(fives.size() > 0) 
 	{
-		ret.push_back(fives.front())
+		ret.push_back(fives.front());
 		return ret;
 	}
 
@@ -281,7 +281,7 @@ ListPos ChessBoard::gen()
 	//冲四活三
 	if(blockedfours.size() > 0) 
 	{
-		ret.push_back(blockedfours.front())
+		ret.push_back(blockedfours.front());
 		return ret;
 	}
 	//双三很特殊，因为能形成双三的不一定比一个活三强
@@ -915,7 +915,7 @@ bool ChessBoard::isFive(Pos pos,int role)
 			break;
 		}
 		int t = m_board[i][pos.y];
-		if(t !== role) 
+		if(t != role) 
 			break;
 		count ++;
 	}
