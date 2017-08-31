@@ -25,12 +25,12 @@ struct AICache
 };
 struct CheckMateCache
 {
-	int score;
+	int deep;
 	int length; //节点的数量
 };
 struct CheckMateRet
 {
-	int deep;
+	int score;
 	int length; //节点的数量
 };
 typedef map<int,AICache> AICacheMap;

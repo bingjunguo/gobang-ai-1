@@ -210,15 +210,20 @@ int AI::checkmateMin(int role,int deep)
 		}
 	}
 	DeeppingRetList points = checkmateFindMin(reverse(role), CHECKMATE_MIN_SCORE);
-	if(points.length == 0) return false;
-	if(points.length && -1 * points[0].score  >= S.FOUR) return false; //为了减少一层搜索，活四就行了。
+	if(points.size() == 0) 
+		return -1;
+	if(points.size() > 0 )
+	{
+		if(points.front().score >= FOUR) 
+			return -1; //为了减少一层搜索，活四就行了。
+	}
 
 	list<int> cands;
 	int currentRole = reverse(role);
 	for(int i = 0;i < points.size(); i++) 
 	{
 		DeeppingRet dr = points.front();
-		points.pop_front()
+		points.pop_front();
 		Pos p = dr.pos;
 
 		m_chessBoard.put(p, currentRole);
@@ -280,7 +285,6 @@ int AI::checkmateMax(int role,int deep)
 	DeeppingRetList points = checkmateFindMax(role, CHECKMATE_MAX_SCORE);
 	if(points.size() > 0 )
 	{
-		points.front()
 		if(points.front().score >= FOUR) 
 			return 1; //为了减少一层搜索，活四就行了。
 	}
@@ -323,7 +327,7 @@ DeeppingRetList AI::checkmateFindMin(int role,int score)
 	{
 		for(int j = 0;j < BOARD_SIZE;j++) 
 		{
-			Pos p; p.x = i; pos.y = j;
+			Pos p; p.x = i; p.y = j;
 			if(m_chessBoard.getPosRole(p) == EMPTY) 
 			{
 				if(m_chessBoard.hasNeighbor(p, 2, 1))  //必须是有邻居的才行
@@ -335,7 +339,7 @@ DeeppingRetList AI::checkmateFindMin(int role,int score)
 	  				if(s1 >= FIVE) 
 	  				{
 	  					dr.score = - s1;
-	  					result.clear()
+	  					result.clear();
 	  					result.push_back(dr);
 	    				return result;
 	  				} 
@@ -368,13 +372,13 @@ DeeppingRetList AI::checkmateFindMin(int role,int score)
 	}
 	if(fives.size() > 0)
 	{
-		result.clear()
+		result.clear();
 	  	result.push_back(fives.front());
 		return result;
 	}
-	if(fours.length) 
+	if(fours.size() > 0) 
 	{	
-		result.clear()
+		result.clear();
 	  	result.push_back(fours.front());
 		return result;
 	}
@@ -389,7 +393,7 @@ DeeppingRetList AI::checkmateFindMax(int role,int score)
 	{
 		for(int j = 0;j < BOARD_SIZE;j++) 
 		{
-			Pos p; p.x = i; pos.y = j;
+			Pos p; p.x = i; p.y = j;
 			if(m_chessBoard.getPosRole(p) == EMPTY) 
 			{
 				if(m_chessBoard.hasNeighbor(p, 2, 1))//必须是有邻居的才行
@@ -457,7 +461,7 @@ CheckMateRet AI::checkmateFast(int role,int deep,bool onlyFour)
 	result = checkmateDeeping(role, deep);
 	if(result >= 0) 
 	{
-		cr.score = S.THREE*2; //虽然不如活四分数高，但是还是比活三分数要高的
+		cr.score = THREE*2; //虽然不如活四分数高，但是还是比活三分数要高的
 		cr.length = result;
 	}
 	return cr;
@@ -468,11 +472,11 @@ int AI::checkmateDeeping(int role,int deep)
 	int result = -1;
 	for(int i = 1;i <= deep;i++) 
 	{
-		result = max(board, role, i);
+		result = checkmateMax( role, i);
 		if(result >= 0) 
 			break; //找到一个就行
 	}
 	if(result >= 0) 
-		cout<<"算杀成功..."+ checkmateNodeCount + "个节点" <<endl;
+		cout<<"算杀成功..."<<checkmateNodeCount << "个节点" <<endl;
 	return result;
 }
