@@ -12,26 +12,51 @@ struct DeeppingRet
 	Pos pos;
 	int score;
 };
+bool compareDeeppingRet(DeeppingRet a,DeeppingRet b)
+{
+	if (a.score < b.score)
+		return true;
+	return false;
+}
 struct AICache
 {
 	int deep;
 	int score;
 };
+struct CheckMateCache
+{
+	int score;
+	int length; //èŠ‚ç‚¹çš„æ•°é‡
+};
+struct CheckMateRet
+{
+	int deep;
+	int length; //èŠ‚ç‚¹çš„æ•°é‡
+};
 typedef map<int,AICache> AICacheMap;
+typedef map<int,CheckMateCache> CheckMateCacheMap;
+typedef list<DeeppingRet> DeeppingRetList;
 class AI
 {
 	ChessBoard m_chessBoard;
 
-	//Í³¼ÆÊı¾İ ÓÃÓÚmaxmin max resetÉèÖÃÎªÁã 
-	int total;  //×Ü½ÚµãÊı
-    int steps;  //×Ü²½Êı
-    int count;  //Ã¿´ÎË¼¿¼µÄ½ÚµãÊı
-    int PVcut;
-    int ABcut;  //AB¼ôÖ¦´ÎÊı
-    int cacheCount; //zobrist»º´æ½ÚµãÊı
-    int cacheGet; //zobrist»º´æÃüÖĞÊıÁ¿
 
-    AICacheMap m_cache;  //µ±Ç°Éî¶Èzobrist»º´æ <deep ,score>
+	//ç»Ÿè®¡æ•°æ® ç”¨äºmaxmin max resetè®¾ç½®ä¸ºé›¶ 
+	int total;  //æ€»èŠ‚ç‚¹æ•°
+    int steps;  //æ€»æ­¥æ•°
+    int count;  //æ¯æ¬¡æ€è€ƒçš„èŠ‚ç‚¹æ•°
+    int PVcut;
+    int ABcut;  //ABå‰ªææ¬¡æ•°
+    int cacheCount; //zobristç¼“å­˜èŠ‚ç‚¹æ•°
+    int cacheGet; //zobristç¼“å­˜å‘½ä¸­æ•°é‡
+
+  	AICacheMap m_cache;  //å½“å‰æ·±åº¦zobristç¼“å­˜ <deep ,score>
+
+  	//ç®—æ€æ•°æ®ç»Ÿè®¡
+  	CheckMateCacheMap m_cacheCheckMate;
+	int checkmateNodeCount;
+	int CHECKMATE_MAX_SCORE;
+	int CHECKMATE_MIN_SCORE;
 
 public:
 	AI();
@@ -45,33 +70,32 @@ public:
 	}
 
 
-	Pos deppingFind(int deep); //²éÕÒ×î°ôÎ»ÖÃº¯ÊıÆğÊ¼µã
+	Pos deppingFind(int deep); //æŸ¥æ‰¾æœ€æ£’ä½ç½®å‡½æ•°èµ·å§‹ç‚¹
 	/*
 	 * max min search
 	 * white is max, black is min
 	 */
 	DeeppingRet maxmin(int deep);
 	int max(int deep,int alpha,int beta,int role);
-	void cacheMaxmin(int deep, int score);  //¶ÔÓÚmaxmin¼«´ó¼«Ğ¡ÖµËÑË÷Ëã·¨µÄ»º´æ
-
+	void cacheMaxmin(int deep, int score);  //å¯¹äºmaxminæå¤§æå°å€¼æœç´¢ç®—æ³•çš„ç¼“å­˜
 	/*
-	 * ËãÉ±
-	 * ËãÉ±µÄÔ­ÀíºÍ¼«´ó¼«Ğ¡ÖµËÑË÷ÊÇÒ»ÑùµÄ
-	 * ²»¹ıËãÉ±Ö»¿¼ÂÇ³åËÄ»îÈıÕâÀà¶Ô·½±ØĞë·ÀÊØµÄÆå
-	 * Òò´ËËãÉ±µÄ¸´ÔÓ¶ÈËäÈ»ÊÇ M^N £¬µ«ÊÇµ×ÊıMÌØ±ğĞ¡£¬¿ÉÒÔËãµ½16²½ÒÔÉÏµÄÉ±Æå¡£
+	 * ç®—æ€
+	 * ç®—æ€çš„åŸç†å’Œæå¤§æå°å€¼æœç´¢æ˜¯ä¸€æ ·çš„
+	 * ä¸è¿‡ç®—æ€åªè€ƒè™‘å†²å››æ´»ä¸‰è¿™ç±»å¯¹æ–¹å¿…é¡»é˜²å®ˆçš„æ£‹
+	 * å› æ­¤ç®—æ€çš„å¤æ‚åº¦è™½ç„¶æ˜¯ M^N ï¼Œä½†æ˜¯åº•æ•°Mç‰¹åˆ«å°ï¼Œå¯ä»¥ç®—åˆ°16æ­¥ä»¥ä¸Šçš„æ€æ£‹ã€‚
 	 */
 
 	/*
-	 * »ù±¾Ë¼Â·
-	 * µçÄÔÓĞ»îÈı»òÕß³åËÄ£¬ÈÏÎªÊÇÍæ¼Ò±ØĞë·ÀÊØµÄ
-	 * Íæ¼Ò·ÀÊØµÄÊ±ºòÈ´²»Ò»¶¨¸ù¾İµçÄÔµÄÆåÀ´×ß£¬¶øÊÇÑ¡Ôñ×ß×Ô¼º×îºÃµÄÆå£¬±ÈÈçÓĞ¿ÉÄÜÊÇ×Ô¼ºÑ¡Ôñ³åËÄ
+	 * åŸºæœ¬æ€è·¯
+	 * ç”µè„‘æœ‰æ´»ä¸‰æˆ–è€…å†²å››ï¼Œè®¤ä¸ºæ˜¯ç©å®¶å¿…é¡»é˜²å®ˆçš„
+	 * ç©å®¶é˜²å®ˆçš„æ—¶å€™å´ä¸ä¸€å®šæ ¹æ®ç”µè„‘çš„æ£‹æ¥èµ°ï¼Œè€Œæ˜¯é€‰æ‹©èµ°è‡ªå·±æœ€å¥½çš„æ£‹ï¼Œæ¯”å¦‚æœ‰å¯èƒ½æ˜¯è‡ªå·±é€‰æ‹©å†²å››
 	 */
-	int checkmateFast(int role,int deep,bool onlyFour);
-	bool checkmateDeeping(int role,int deep);
-	void checkmateCache(int deep, bool result);
-	bool checkmateMin(int role,int deep);
-	bool checkmateMax(int role,int deep);
-	bool checkmateFindMin(int role,int score);
-	bool checkmateFindMax(int role,int score);
+	CheckMateRet checkmateFast(int role,int deep,bool onlyFour);
+	int checkmateDeeping(int role,int deep);
+	int checkmateMin(int role,int deep);
+	int checkmateMax(int role,int deep);
+	DeeppingRetList checkmateFindMin(int role,int score);
+	DeeppingRetList checkmateFindMax(int role,int score);
+	void cacheCheckmate(int deep, int length);  //å¯¹äºç®—æ€ç®—æ³•çš„ç¼“å­˜
 };
 #endif

@@ -48,6 +48,10 @@ public:
 	{
 		return m_zobrist;
 	}
+	int getPosRole(Pos pos)
+	{
+		return m_board[pos.x][pos.y];
+	}
 
 };
 

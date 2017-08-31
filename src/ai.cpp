@@ -9,6 +9,10 @@ AI::AI()
 {
 	total = 0; steps = 0;
 	cacheCount = 0;cacheGet = 0; 
+
+	checkmateNodeCount = 0;
+	CHECKMATE_MAX_SCORE = THREE;
+	CHECKMATE_MIN_SCORE = FOUR;
 }
 
 AI::~AI()
@@ -160,11 +164,11 @@ int AI::max(int deep,int alpha,int beta,int role)
 	}
 	if((deep == 2 || deep == 3 ) && AIMath::littleThan(best, THREE*2) && AIMath::greatThan(best, THREE * -1)) 
 	{
-		int mate = checkmateFast(role, CHECKMATE_DEEP,false);
-		if(mate > 0) 
+		CheckMateRet cr = checkmateFast(role, CHECKMATE_DEEP,false);
+		if(cr.score > 0) 
 		{
 			//int score = mate.score * Math.pow(0.8, mate.length) * (role === R.com ? 1 : -1);
-			int score = mate * 0.8 * (role == COM ? 1 : -1);
+			int score = (int)cr.score * pow(0.8, cr.length) * (role == COM ? 1 : -1);
 			cacheMaxmin(deep, score);
 			return score;
 		}
@@ -183,4 +187,292 @@ void AI::cacheMaxmin(int deep, int score)
 	cache.score = score;
   	m_cache[m_chessBoard.getZobrist().getCode()] = cache;
     cacheCount ++;
+}
+
+int AI::checkmateMin(int role,int deep)
+{
+	checkmateNodeCount ++;
+	int w = m_chessBoard.isWin();
+	if(w == role) 
+		return 0;
+	if(w == reverse(role)) 
+		return -1;
+	if(deep <= 0) 
+		return -1;
+	if(CACHE) 
+	{
+		if(m_cacheCheckMate.count(m_chessBoard.getZobrist().getCode()) > 0)
+		{
+			CheckMateCache c = m_cacheCheckMate[m_chessBoard.getZobrist().getCode()];
+			if(c.deep >= deep || c.length >= 0) {
+				return c.length;
+			}
+		}
+	}
+	DeeppingRetList points = checkmateFindMin(reverse(role), CHECKMATE_MIN_SCORE);
+	if(points.length == 0) return false;
+	if(points.length && -1 * points[0].score  >= S.FOUR) return false; //为了减少一层搜索，活四就行了。
+
+	list<int> cands;
+	int currentRole = reverse(role);
+	for(int i = 0;i < points.size(); i++) 
+	{
+		DeeppingRet dr = points.front();
+		points.pop_front()
+		Pos p = dr.pos;
+
+		m_chessBoard.put(p, currentRole);
+		m_chessBoard.getZobrist().go(p.x, p.y, currentRole);
+
+		int m = checkmateMax(role, deep - 1);
+
+		m_chessBoard.getZobrist().go(p.x, p.y, currentRole);
+		m_chessBoard.put(p, EMPTY);	
+
+		if(m > 0) {
+			m++;
+			cands.push_back(m);
+			cacheCheckmate(deep, m);
+			continue;
+		} else if(m == 0) {  //相当于ture 小于0相当于false
+			cacheCheckmate(deep, -1);
+			return -1; //只要有一种能防守住
+		}
+	}
+	srand((unsigned int)time(NULL));
+
+	//int result = cands[Math.floor(cands.length*Math.random())];  //无法防守住
+	int rd = floor(cands.size() * (double)rand() / RAND_MAX);
+	if(rd == cands.size())
+		rd = rd - 1;
+	int i = 0;
+	int result = 0;
+	for(list<int>::iterator it = cands.begin(); it != cands.end(); ++it)
+	{
+		if(i == rd)
+		{
+			result = *it;
+			break;
+		}
+		i++;
+	}
+
+	cacheCheckmate(deep, result);
+	return result;
+}
+int AI::checkmateMax(int role,int deep)
+{
+	checkmateNodeCount ++;
+	if(deep <= 0) 
+		return false;
+
+	if(CACHE) 
+	{
+		if(m_cacheCheckMate.count(m_chessBoard.getZobrist().getCode()) > 0)
+		{
+			CheckMateCache c = m_cacheCheckMate[m_chessBoard.getZobrist().getCode()];
+			if(c.deep >= deep || c.length >= 0) {
+				return c.length;
+			}
+		}
+	}
+
+	DeeppingRetList points = checkmateFindMax(role, CHECKMATE_MAX_SCORE);
+	if(points.size() > 0 )
+	{
+		points.front()
+		if(points.front().score >= FOUR) 
+			return 1; //为了减少一层搜索，活四就行了。
+	}
+	
+	if(points.size() == 0) 
+		return -1;
+	for(int i = 0;i < points.size();i++) 
+	{
+		DeeppingRet dr = points.front();
+		points.pop_front()
+		Pos p = dr.pos;
+
+		m_chessBoard.put(p, role);
+		m_chessBoard.getZobrist().go(p.x, p.y, role);
+
+		int m = checkmateMin(role, deep - 1);
+
+		m_chessBoard.getZobrist().go(p.x, p.y, role);
+		m_chessBoard.put(p, EMPTY);
+		if(m > 0) 
+		{
+			m++; 
+			cacheCheckmate(deep, m);
+			return m;
+		}else if(m == 0) {  //相当于ture 小于0相当于false 
+			cacheCheckmate(deep, 1);
+			return 1;
+		}
+		
+	}
+	cacheCheckmate(deep, -1);
+	return -1;
+}
+DeeppingRetList AI::checkmateFindMin(int role,int score)
+{
+	DeeppingRetList result;
+	DeeppingRetList fives;
+	DeeppingRetList fours;
+	for(int i = 0;i < BOARD_SIZE;i++) 
+	{
+		for(int j = 0;j < BOARD_SIZE;j++) 
+		{
+			Pos p; p.x = i; pos.y = j;
+			if(m_chessBoard.getPosRole(p) == EMPTY) 
+			{
+				if(m_chessBoard.hasNeighbor(p, 2, 1))  //必须是有邻居的才行
+				{
+					DeeppingRet dr;
+					dr.pos = p;
+					int s1 = m_chessBoard.scorePoint(p, role);
+					int s2 = m_chessBoard.scorePoint(p, reverse(role));
+	  				if(s1 >= FIVE) 
+	  				{
+	  					dr.score = - s1;
+	  					result.clear()
+	  					result.push_back(dr);
+	    				return result;
+	  				} 
+	  				if(s1 >= FOUR) 
+	  				{
+	   					dr.score = -s1;
+	    				fours.push_front(dr);
+	    				continue;
+	  				}
+					if(s2 >= FIVE) 
+					{
+						dr.score = s2;
+						fives.push_back(dr);
+						continue;
+					} 
+					if(s2 >= FOUR) 
+					{
+						dr.score = s2;
+						fours.push_back(dr);
+						continue;
+					}
+
+					if(s1 >= score || s2 >= score) {
+						dr.score = s1;
+						result.push_back(dr);
+					}
+				}
+			}
+		}
+	}
+	if(fives.size() > 0)
+	{
+		result.clear()
+	  	result.push_back(fives.front());
+		return result;
+	}
+	if(fours.length) 
+	{	
+		result.clear()
+	  	result.push_back(fours.front());
+		return result;
+	}
+	//注意对结果进行排序
+	result.sort(compareDeeppingRet);
+	return result;
+}
+DeeppingRetList AI::checkmateFindMax(int role,int score)
+{
+	DeeppingRetList result;
+	for(int i = 0;i < BOARD_SIZE;i++) 
+	{
+		for(int j = 0;j < BOARD_SIZE;j++) 
+		{
+			Pos p; p.x = i; pos.y = j;
+			if(m_chessBoard.getPosRole(p) == EMPTY) 
+			{
+				if(m_chessBoard.hasNeighbor(p, 2, 1))//必须是有邻居的才行
+				{ 					
+					int s = m_chessBoard.scorePoint(p, role);
+					DeeppingRet dr;
+					dr.pos = p;
+					dr.score = s;
+					if(s >= FIVE) 
+					{
+						result.clear();
+						result.push(p);
+						return result;
+					}
+					if(s >= score) 
+					{
+						result.push(p);
+					}
+				}
+			}
+		}
+	}
+	//注意对结果进行排序
+	result.sort(compareDeeppingRet);
+	return result;
+}
+
+void AI::cacheCheckmate(int deep, int length)
+{
+ 	if(!CACHE) 
+  		return;
+  	CheckMateCache cc;
+  	cc.deep = deep;
+  	cc.length = length;
+  	m_cacheCheckMate[m_chessBoard.getZobrist().getCode()] = cc;
+  	return;
+}
+CheckMateRet AI::checkmateFast(int role,int deep,bool onlyFour)
+{
+	CheckMateRet cr;
+	cr.score = 0;
+	cr.length = 0;
+
+	if(deep <= 0) 
+		return cr;
+
+	//先计算冲四赢的
+	CHECKMATE_MAX_SCORE = FOUR;
+	CHECKMATE_MIN_SCORE = FIVE;
+
+	int result = checkmateDeeping(role, deep);
+	if(result >= 0) 
+	{
+		cr.score = FOUR;
+		cr.length = result;
+		return cr;
+	}
+
+	if(onlyFour) 
+		return cr;  //只计算冲四
+
+	//再计算通过 活三 赢的；
+	CHECKMATE_MAX_SCORE = THREE;
+	CHECKMATE_MIN_SCORE = FOUR;
+	result = checkmateDeeping(role, deep);
+	if(result >= 0) 
+	{
+		cr.score = S.THREE*2; //虽然不如活四分数高，但是还是比活三分数要高的
+		cr.length = result;
+	}
+	return cr;
+}
+int AI::checkmateDeeping(int role,int deep)
+{
+	checkmateNodeCount = 0;
+	int result = -1;
+	for(int i = 1;i <= deep;i++) 
+	{
+		result = max(board, role, i);
+		if(result >= 0) 
+			break; //找到一个就行
+	}
+	if(result >= 0) 
+		cout<<"算杀成功..."+ checkmateNodeCount + "个节点" <<endl;
+	return result;
 }
