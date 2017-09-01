@@ -68,7 +68,10 @@ public:
     	count = 0; PVcut = 0;
     	ABcut = 0; 
 	}
-
+	ChessBoard getChessBoard()
+	{
+		return m_chessBoard;
+	}
 
 	Pos deppingFind(int deep); //查找最棒位置函数起始点
 	/*

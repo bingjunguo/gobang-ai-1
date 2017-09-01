@@ -5,7 +5,8 @@
 EXES = game.run
 
 all: chessboard.o ai.o
-	#g++ -o game.run "-fno-stack-protector" chessboard.o
+	cp chessboard.o ../test/
+	cp ai.o ../test/
 	#rm *.o
 
 chessboard.o:chessboard.cpp
