@@ -1,6 +1,5 @@
 #include "chessboard.h"
 
-
 ChessBoard::ChessBoard()
 {
 	_initChessBoard();

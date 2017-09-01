@@ -5,6 +5,13 @@
 
 using namespace std; 
 
+bool compareDeeppingRet(DeeppingRet a,DeeppingRet b)
+{
+	if (a.score < b.score)
+		return true;
+	return false;
+}
+
 AI::AI()
 {
 	total = 0; steps = 0;

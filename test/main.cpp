@@ -3,7 +3,7 @@
 using namespace std;
 
 
-void print_chess(int [][]board)
+void print_chess(int board[BOARD_SIZE][BOARD_SIZE])
 {
 	for (int i = 0; i < BOARD_SIZE; ++i)
 	{

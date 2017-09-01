@@ -20,7 +20,7 @@ public:
   		}
   		this->m_code = this->_rand();
 	}
-	~Zobrist();
+	~Zobrist(){};
 	int _rand()
 	{
 		//return Math.floor(Math.random() * 1000000000);  //再多一位就溢出了。。

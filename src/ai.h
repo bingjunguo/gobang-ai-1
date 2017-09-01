@@ -12,12 +12,6 @@ struct DeeppingRet
 	Pos pos;
 	int score;
 };
-bool compareDeeppingRet(DeeppingRet a,DeeppingRet b)
-{
-	if (a.score < b.score)
-		return true;
-	return false;
-}
 struct AICache
 {
 	int deep;
