@@ -10,26 +10,18 @@ public:
 	
 	static bool greatThan(int a,int b) 
 	{
-		if (a < 0) a = -a;
-		if (b < 0) b = -b;
 		return (double)a >= (double)b * threshold;
 	}
 	static bool greatOrEqualThan(int a,int b) 
 	{
-		if (a < 0) a = -a;
-		if (b < 0) b = -b;
 		return (double)a * threshold >= (double)b;
 	}
 	static bool littleThan(int a,int b) 
 	{
-		if (a < 0) a = -a;
-		if (b < 0) b = -b;
 		return (double)a * threshold <= (double)b;
 	}
 	static bool littleOrEqualThan(int a,int b) 
 	{
-		if (a < 0) a = -a;
-		if (b < 0) b = -b;
 		return (double)a <= (double)b * threshold;
 	}
 	static bool equal(int a,int b) 

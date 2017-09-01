@@ -66,7 +66,7 @@ bool ChessBoard::put(Pos p, int role)
 {
 	if (p.x > BOARD_SIZE || p.y > BOARD_SIZE)
 		return false;
-	if (m_board[p.x][p.y] != EMPTY)
+	if (m_board[p.x][p.y] != EMPTY && role != EMPTY)
 		return false;
 	m_board[p.x][p.y] = role;
 	m_zobrist.go(p.x, p.y, role);

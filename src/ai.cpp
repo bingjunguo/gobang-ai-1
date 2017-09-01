@@ -55,6 +55,7 @@ Pos AI::deppingFind(int deep)
 	DeeppingRet result;
 	for(int i=2;i <= deep; i += 2) 
 	{
+		cout<<"deep = "<<i<<endl;
 		result = maxmin(i);
 		if(AIMath::greatOrEqualThan(result.score, FOUR)) 
 			return result.pos;
@@ -99,9 +100,9 @@ DeeppingRet AI::maxmin(int deep)
 	}
 	//cout<<"score:"<<best<<"  points :bestPoints"<<endl
 	srand((unsigned int)time(NULL));
-
+	int sj = rand();
 	//Pos p = bestPoints[floor(bestPoints.size() * (double)rand() / RAND_MAX)];
-	int rd = floor(bestPoints.size() * (double)rand() / RAND_MAX);
+	int rd = floor((double)bestPoints.size() * (double)(sj %1000) /(double)1000);
 	if(rd == bestPoints.size())
 		rd = rd - 1;
 	int i = 0;
@@ -129,7 +130,7 @@ DeeppingRet AI::maxmin(int deep)
 	}
 
 	 //注意，减掉的节点数实际远远不止 ABcut 个，因为减掉的节点的子节点都没算进去。实际 4W个节点的时候，剪掉了大概 16W个节点
-	cout<<"all"<< steps << "strp," << total << "node, one stap" << floor(total/steps) <<"node"<<endl;
+	cout<<"all "<< steps << " steps, total " << total << " node, one step " << floor(total/steps) <<" nodes"<<endl;
 
 	return result;
 }
@@ -264,7 +265,8 @@ int AI::checkmateMin(int role,int deep)
 	srand((unsigned int)time(NULL));
 
 	//int result = cands[Math.floor(cands.length*Math.random())];  //无法防守住
-	int rd = floor(cands.size() * (double)rand() / RAND_MAX);
+	int sj =rand();
+	int rd = floor(cands.size()* (double)(sj %1000) /(double)1000);
 	if(rd == cands.size())
 		rd = rd - 1;
 	int i = 0;
