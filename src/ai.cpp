@@ -1,3 +1,4 @@
+
 #include "ai.h"
 #include "aimath.h"
 #include <iostream>
@@ -29,8 +30,12 @@ AI::~AI()
 
 Pos AI::set(Pos pos)
 {
-	m_chessBoard.put(pos, HUM);
-	Pos p = deppingFind(SEARCH_DEEP);
+	Pos p; p.x = -1;p.y = -1;
+	if (m_chessBoard.getPosRole(pos) != EMPTY)
+		return p;
+	if(!m_chessBoard.put(pos, HUM))
+		return p;
+	p = deppingFind(SEARCH_DEEP);
 
 	m_chessBoard.put(p, COM);
 	return p;
@@ -100,7 +105,7 @@ DeeppingRet AI::maxmin(int deep)
 	if(rd == bestPoints.size())
 		rd = rd - 1;
 	int i = 0;
-	Pos p;
+	Pos p;p.x = -1; p.y = -1;
 	for(ListPos::iterator it = bestPoints.begin(); it != bestPoints.end(); ++it)
 	{
 		if(i == rd)
@@ -116,10 +121,15 @@ DeeppingRet AI::maxmin(int deep)
 
 	steps ++;
 	total += count;
-	cout<<"搜索节点数:"<< count<< ",AB剪枝次数:"<<ABcut << ", PV剪枝次数:" << PVcut << ", 缓存命中:" << (cacheGet / cacheCount) + ","
-		<< cacheGet << "/" << cacheCount<<endl;
+	cout<<"search node:"<< count<< "    ABcut:"<<ABcut << "   PVcut:" << PVcut<<endl; 
+	if (cacheCount != 0)
+	{
+		cout<<"cache %:" << (cacheGet / cacheCount) + ","
+			<< cacheGet << "/" << cacheCount<<endl;
+	}
+
 	 //注意，减掉的节点数实际远远不止 ABcut 个，因为减掉的节点的子节点都没算进去。实际 4W个节点的时候，剪掉了大概 16W个节点
-	cout<<"当前统计：总共"<< steps << "步, " << total << "个节点, 平均每一步" << floor(total/steps) <<"个节点"<<endl;
+	cout<<"all"<< steps << "strp," << total << "node, one stap" << floor(total/steps) <<"node"<<endl;
 
 	return result;
 }
@@ -484,6 +494,6 @@ int AI::checkmateDeeping(int role,int deep)
 			break; //找到一个就行
 	}
 	if(result >= 0) 
-		cout<<"算杀成功..."<<checkmateNodeCount << "个节点" <<endl;
+		cout<<"checkmate success..."<<checkmateNodeCount << "node" <<endl;
 	return result;
 }

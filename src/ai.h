@@ -57,7 +57,7 @@ public:
 	~AI();
 	Pos set(Pos pos);
 	bool back();
-	int reset()
+	void reset()
 	{	
     	count = 0; PVcut = 0;
     	ABcut = 0; 

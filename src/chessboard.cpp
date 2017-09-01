@@ -64,6 +64,8 @@ void ChessBoard::_initChessScore()
 
 bool ChessBoard::put(Pos p, int role)
 {
+	if (p.x > BOARD_SIZE || p.y > BOARD_SIZE)
+		return false;
 	if (m_board[p.x][p.y] != EMPTY)
 		return false;
 	m_board[p.x][p.y] = role;
@@ -110,7 +112,7 @@ int ChessBoard::isWin()
 			{
 				Pos pos; pos.x = i; pos.y = j;
 				int r = isFive(pos, role);
-				if(role > 0) 
+				if(r > 0) 
 					return role;
 			}
 		}
@@ -230,6 +232,7 @@ ListPos ChessBoard::gen()
 
 					if(scoreCom >= FIVE) 
 					{//先看电脑能不能连成5
+						ret.clear();
 						ret.push_back(pos);
 						return ret;
 					} else if(scoreHum >= FIVE) {//再看玩家能不能连成5
@@ -255,9 +258,9 @@ ListPos ChessBoard::gen()
 					} else if(scoreCom >= TWO) {
 						twos.push_front(pos);
 					} else if(scoreHum >= TWO) {
-						twos.push_front(pos);
+						twos.push_back(pos);
 					} else {
-						neighbors.push_front(pos);
+						neighbors.push_back(pos);
 					}
 				}
 			}
@@ -267,6 +270,7 @@ ListPos ChessBoard::gen()
 	//如果成五，是必杀棋，直接返回
 	if(fives.size() > 0) 
 	{
+		ret.clear();
 		ret.push_back(fives.front());
 		return ret;
 	}
@@ -280,6 +284,7 @@ ListPos ChessBoard::gen()
 	//冲四活三
 	if(blockedfours.size() > 0) 
 	{
+		ret.clear();
 		ret.push_back(blockedfours.front());
 		return ret;
 	}
@@ -320,6 +325,10 @@ ListPos ChessBoard::gen()
 				break;
 			}
 		}
+	}
+	else
+	{
+		return threes;
 	}
 
 	return ret;

@@ -26,7 +26,7 @@ public:
 		//return Math.floor(Math.random() * 1000000000);  //再多一位就溢出了。。
 		//这里需要改一下
 		srand((unsigned int)time(NULL));     //每次执行种子不同，生成不同的随机数
-		return floor(1000000000 * (double)rand() / RAND_MAX);
+		return (int)floor(1000000000 * (double)rand() / RAND_MAX);
 	}
 	int go(int x, int y, int role) {
 		int index = BOARD_SIZE * x + y;
