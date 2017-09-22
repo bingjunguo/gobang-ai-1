@@ -743,7 +743,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 			switch(count) 
 			{
 				case 3: return THREE;
-				case 4: 
+				case 4: return BLOCKED_FOUR;
 				case 5: return BLOCKED_FOUR;
 				case 6: return FOUR;
 			}
@@ -764,8 +764,8 @@ int ChessBoard::countToType(int count, int block, int empty)
 		{
 			switch(count) 
 			{
-				case 4:
-				case 5:
+				case 4: return BLOCKED_FOUR;
+				case 5: return BLOCKED_FOUR;
 				case 6: return BLOCKED_FOUR;
 			}
 		}
@@ -778,7 +778,7 @@ int ChessBoard::countToType(int count, int block, int empty)
 		{
 			switch(count) 
 			{
-				case 4:
+				case 4: return THREE;
 				case 5: return THREE;
 				case 6: return BLOCKED_FOUR;
 				case 7: return FOUR;
@@ -789,8 +789,8 @@ int ChessBoard::countToType(int count, int block, int empty)
 		{
 			switch(count) 
 			{
-				case 4:
-				case 5:
+				case 4: return BLOCKED_FOUR;
+				case 5: return BLOCKED_FOUR;
 				case 6: return BLOCKED_FOUR;
 				case 7: return FOUR;
 			}
@@ -800,9 +800,9 @@ int ChessBoard::countToType(int count, int block, int empty)
 		{
 			switch(count) 
 			{
-				case 4:
-				case 5:
-				case 6:
+				case 4: return BLOCKED_FOUR;
+				case 5: return BLOCKED_FOUR;
+				case 6: return BLOCKED_FOUR;
 				case 7: return BLOCKED_FOUR;
 			}
 		}
@@ -816,9 +816,9 @@ int ChessBoard::countToType(int count, int block, int empty)
 		{
 			switch(count) 
 			{
-				case 5:
-				case 6:
-				case 7:
+				case 5: return FOUR;
+				case 6: return FOUR;
+				case 7: return FOUR;
 				case 8: return FOUR;
 			}
 		}
@@ -827,9 +827,9 @@ int ChessBoard::countToType(int count, int block, int empty)
 		{
 			switch(count) 
 			{
-				case 4:
-				case 5:
-				case 6:
+				case 4: return BLOCKED_FOUR;
+				case 5: return BLOCKED_FOUR;
+				case 6: return BLOCKED_FOUR;
 				case 7: return BLOCKED_FOUR;
 				case 8: return FOUR;
 			}
@@ -839,9 +839,9 @@ int ChessBoard::countToType(int count, int block, int empty)
 		{
 			switch(count) 
 			{
-				case 5:
-				case 6:
-				case 7:
+				case 5: return BLOCKED_FOUR;
+				case 6: return BLOCKED_FOUR;
+				case 7: return BLOCKED_FOUR;
 				case 8: return BLOCKED_FOUR;
 			}
 		}
