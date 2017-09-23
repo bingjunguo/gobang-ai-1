@@ -67,17 +67,24 @@ DeeppingRet AI::maxmin(int deep)
 {
 	int best = MIN;
 	ListPos points = m_chessBoard.gen();
+#if 1
+	cout<<"maxmin gen"<<endl;
+	for(ListPos::iterator i = points.begin(); i != points.end(); i++)
+	{
+		cout <<"[ " <<i->x << ", "<<i->y<<" ]" <<endl; 
+	}
+#endif
+
 	ListPos bestPoints;
 
 	reset();
 
-	for(int i=0; i < points.size();i++) 
+	for(ListPos::iterator i = points.begin(); i != points.end(); i++) 
 	{
-		Pos p = points.front();
-		points.pop_front();
+		Pos p = *i;
+
 		m_chessBoard.put(p, COM);
 		int v = -maxDeep(deep-1, -MAX, -best, HUM);
-
 		//边缘棋子的话，要把分数打折，避免电脑总喜欢往边上走
 		if(p.x<3 || p.x > 11 || p.y < 3 || p.y > 11) 
 		{
@@ -98,7 +105,13 @@ DeeppingRet AI::maxmin(int deep)
 		}
 		m_chessBoard.remove(p);
 	}
-	//cout<<"score:"<<best<<"  points :bestPoints"<<endl
+#if 1
+	cout<<"score:"<<best<<"  points :"<<endl;
+	for(ListPos::iterator i = bestPoints.begin(); i != bestPoints.end(); i++)
+	{
+		cout <<"[ " <<i->x << ", "<<i->y<<" ]" <<endl;
+	}
+#endif
 	srand((unsigned int)time(NULL));
 	int sj = rand();
 	//Pos p = bestPoints[floor(bestPoints.size() * (double)rand() / RAND_MAX)];
@@ -151,18 +164,26 @@ int AI::maxDeep(int deep,int alpha,int beta,int role)
 	}
 
 	int v = m_chessBoard.evaluate(role);
+	//cout<<"max 0 evaluate =  "<< v <<endl;
 	count ++;
 	if(deep <= 0 || AIMath::greatOrEqualThan(v, FIVE)) {
 		return v;
 	}
-
+	//cout<<"max 1 evaluate"<<endl;
 	int best = MIN;
 	ListPos points = m_chessBoard.gen();
 
-	for(int i = 0;i < points.size();i++) 
+#if 0
+	cout<<"max 2 gen"<<endl;
+	for(ListPos::iterator i = points.begin(); i != points.end(); i++)
 	{
-		Pos p = points.front();
-		points.pop_front();
+		cout <<"[ " <<i->x << ", "<<i->y<<" ]" <<endl; 
+	}
+#endif
+
+	for(ListPos::iterator i = points.begin(); i != points.end(); i++) 
+	{
+		Pos p = *i;
 		m_chessBoard.put(p, role);
 
 		int v = - maxDeep(deep-1, -beta, -1 *( best > alpha ? best : alpha), reverse(role)) * DEEP_DECREASE;
@@ -238,10 +259,9 @@ int AI::checkmateMin(int role,int deep)
 
 	list<int> cands;
 	int currentRole = reverse(role);
-	for(int i = 0;i < points.size(); i++) 
+	for(DeeppingRetList::iterator i = points.begin(); i != points.end(); i++) 
 	{
-		DeeppingRet dr = points.front();
-		points.pop_front();
+		DeeppingRet dr = *i;
 		Pos p = dr.pos;
 
 		m_chessBoard.put(p, currentRole);
@@ -310,10 +330,9 @@ int AI::checkmateMax(int role,int deep)
 	
 	if(points.size() == 0) 
 		return -1;
-	for(int i = 0;i < points.size();i++) 
+	for(DeeppingRetList::iterator i = points.begin(); i != points.end(); i++) 
 	{
-		DeeppingRet dr = points.front();
-		points.pop_front();
+		DeeppingRet dr = *i;
 		Pos p = dr.pos;
 
 		m_chessBoard.put(p, role);
@@ -495,7 +514,9 @@ int AI::checkmateDeeping(int role,int deep)
 		if(result >= 0) 
 			break; //找到一个就行
 	}
+	/*
 	if(result >= 0) 
 		cout<<"checkmate success..."<<checkmateNodeCount << "node" <<endl;
+	*/
 	return result;
 }
