@@ -1,4 +1,6 @@
 #include "chessboard.h"
+#include <iostream>
+using namespace std;
 
 ChessBoard::ChessBoard()
 {
@@ -6,8 +8,8 @@ ChessBoard::ChessBoard()
 	//默认黑先走
 	Pos pos;
 	pos.x = 7; pos.y = 7;
-
-	put(pos, COM);
+	m_board[7][7] = COM;
+	//put(pos, COM);
 	m_zobrist.go(pos.x, pos.y, COM);
 
 	_initChessScore();
@@ -66,11 +68,33 @@ bool ChessBoard::put(Pos p, int role)
 {
 	if (p.x > BOARD_SIZE || p.y > BOARD_SIZE)
 		return false;
+	/*
+	
 	if (m_board[p.x][p.y] != EMPTY && role != EMPTY)
 		return false;
+	*/
 	m_board[p.x][p.y] = role;
 	m_zobrist.go(p.x, p.y, role);
 	updateScore(p);
+#if 0
+	cout<<"com score:"<<endl;
+	for(int i = 0;i < BOARD_SIZE; i++)
+	{
+		for(int j = 0;j < BOARD_SIZE; j++)
+		{
+			cout<<m_comScore[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	cout<<"hum score:"<<endl;
+	for(int i = 0;i < BOARD_SIZE; i++)
+	{
+		for(int j = 0;j < BOARD_SIZE; j++)
+			cout<<m_humScore[i][j]<<" ";
+		cout<<endl;
+	}
+
+#endif
 	m_steps.push_back(p);
 	return true;
 }
@@ -183,8 +207,8 @@ void ChessBoard::updateScore(Pos pos)
 int ChessBoard::evaluate(int role)
 {
 	//这里加了缓存，但是并没有提升速度
-	if(m_evaluateCache[m_zobrist.getCode()]) 
-		return m_evaluateCache[m_zobrist.getCode()];
+	//if(m_evaluateCache[m_zobrist.getCode()]) 
+	//	return m_evaluateCache[m_zobrist.getCode()];
 
 	m_comMaxScore = - FIVE;
 	m_humMaxScore = - FIVE;
@@ -202,7 +226,7 @@ int ChessBoard::evaluate(int role)
 		}
 	}
 	int result = (role == COM ? 1 : -1) * (m_comMaxScore - m_humMaxScore);
-	m_evaluateCache[m_zobrist.getCode()] = result;
+	//m_evaluateCache[m_zobrist.getCode()] = result;
 
 	return result;
 }
