@@ -37,3 +37,4 @@
 *.pdb
 *.sdf
 
+test/client/ipch/*

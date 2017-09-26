@@ -144,7 +144,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// 分析菜单选择:
 		switch (wmId)
 		{
-		case IDM_FILE_OPEN:
+		/*case IDM_FILE_OPEN:
 			{
 				//FILE *fpOpen;
 			 //   fopen_s(&fpOpen,"file.dat","rb");
@@ -196,9 +196,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					tmpList.pop_front();
 					fwrite(&pt,sizeof(POINT),1,fpSave);
 				}
-				fclose(fpSave);*/
+				fclose(fpSave);
 			}
-			break;
+			break;*/
 		case IDM_OP_BACK:
 			//只能甲方撤销
 			if(chessBoard.intWhoPlay == 0)
@@ -329,10 +329,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 							if(CheckWin(chessBoard.intChessBoard,chessBoard.intWhoPlay,x/width,y/height))
 							{
-								MessageBox(hWnd,"白方胜利","厉害",MB_OK);
-								int wmId = IDM_FILE_SAVE;
+								MessageBox(hWnd,"厉害啊","白方胜利",MB_OK);
+								/*int wmId = IDM_FILE_SAVE;
 								chessBoard.intWhoPlay = 1;
 								SendMessage(hWnd,WM_COMMAND,(WPARAM)wmId,0); //保存一下
+								*/
 								if (ai != NULL)
 								{
 									delete ai;
@@ -397,7 +398,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			
 			if(CheckWin(chessBoard.intChessBoard,chessBoard.intWhoPlay,pt.x,pt.y))
 			{	
-				if(IDOK == MessageBox(hWnd,"黑方胜利","辣鸡",MB_OKCANCEL))
+				if(IDOK == MessageBox(hWnd,"能赢一把嘛...","黑方胜利",MB_OKCANCEL))
 				{
 					IniChessBoard(chessBoard);
 					InvalidateRect(hWnd,NULL,TRUE);
