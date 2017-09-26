@@ -270,7 +270,7 @@ int AI::checkmateMin(int role,int deep)
 		int m = checkmateMax(role, deep - 1);
 
 		m_chessBoard.getZobrist().go(p.x, p.y, currentRole);
-		m_chessBoard.put(p, EMPTY);	
+		m_chessBoard.remove(p);	
 
 		if(m > 0) {
 			m++;
@@ -341,7 +341,7 @@ int AI::checkmateMax(int role,int deep)
 		int m = checkmateMin(role, deep - 1);
 
 		m_chessBoard.getZobrist().go(p.x, p.y, role);
-		m_chessBoard.put(p, EMPTY);
+		m_chessBoard.remove(p);
 		if(m > 0) 
 		{
 			m++; 

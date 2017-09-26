@@ -68,11 +68,11 @@ bool ChessBoard::put(Pos p, int role)
 {
 	if (p.x > BOARD_SIZE || p.y > BOARD_SIZE)
 		return false;
-	/*
+	
 	
 	if (m_board[p.x][p.y] != EMPTY && role != EMPTY)
 		return false;
-	*/
+	
 	m_board[p.x][p.y] = role;
 	m_zobrist.go(p.x, p.y, role);
 	updateScore(p);
@@ -104,6 +104,7 @@ bool ChessBoard::remove(Pos p)
 	m_zobrist.go(p.x, p.y, role);
 	m_board[p.x][p.y] = EMPTY;
 	updateScore(p);
+	m_steps.pop_back();
 	return true;
 }
 bool ChessBoard::back()
