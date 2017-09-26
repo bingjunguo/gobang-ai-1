@@ -133,7 +133,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static ChessBoardShow chessBoard;
 	static int height;
 	static int width;
-	static AI ai;
+	static AI *ai = NULL;
 	HPEN hPen,hOldP;
 	HBRUSH hBrush,hOldB;
 	switch (message)
@@ -201,53 +201,58 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_OP_BACK:
 			//只能甲方撤销
-			//if(chessBoard.intWhoPlay == 0)
-			//{
-			//	POINT pt;
-			//	if(chessBoard.replayList.size() > 0)
-			//	{
-			//		pt = chessBoard.replayList.front();
-			//		chessBoard.replayList.pop_front();
-			//		chessBoard.BLast.x = pt.x;
-			//		chessBoard.BLast.y = pt.y;
-			//		chessBoard.intChessBoard[chessBoard.BLast.x][chessBoard.BLast.y] = -1;
+			if(chessBoard.intWhoPlay == 0)
+			{
+				POINT pt;
+				if(chessBoard.replayList.size() > 0)
+				{
+					pt = chessBoard.replayList.front();
+					chessBoard.replayList.pop_front();
+					chessBoard.BLast.x = pt.x;
+					chessBoard.BLast.y = pt.y;
+					chessBoard.intChessBoard[chessBoard.BLast.x][chessBoard.BLast.y] = -1;
 
-			//		pt = chessBoard.replayList.front();
-			//		chessBoard.replayList.pop_front();
-			//		chessBoard.ALast.x = pt.x;
-			//		chessBoard.ALast.y = pt.y;
-			//		chessBoard.intChessBoard[chessBoard.ALast.x][chessBoard.ALast.y] = -1;
-			//		InvalidateRect(hWnd,NULL,TRUE);
-			//	}
-			//}
-			//else if(chessBoard.intWhoPlay == 1)
-			//{
-			//	POINT pt;
-			//	if(chessBoard.replayList.size() > 0)
-			//	{
-			//		pt = chessBoard.replayList.front();
-			//		chessBoard.replayList.pop_front();
-			//		chessBoard.ALast.x = pt.x;
-			//		chessBoard.ALast.y = pt.y;
-			//		chessBoard.intChessBoard[chessBoard.ALast.x][chessBoard.ALast.y] = -1;
+					pt = chessBoard.replayList.front();
+					chessBoard.replayList.pop_front();
+					chessBoard.ALast.x = pt.x;
+					chessBoard.ALast.y = pt.y;
+					chessBoard.intChessBoard[chessBoard.ALast.x][chessBoard.ALast.y] = -1;
+					InvalidateRect(hWnd,NULL,TRUE);
+					if(ai->back())
+					{
+						true;
+						//MessageBox(hWnd,"AI撤销成功","...",MB_OK);
+					}
+				}
+			}
+			else if(chessBoard.intWhoPlay == 1)
+			{
+				POINT pt;
+				if(chessBoard.replayList.size() > 0)
+				{
+					pt = chessBoard.replayList.front();
+					chessBoard.replayList.pop_front();
+					chessBoard.ALast.x = pt.x;
+					chessBoard.ALast.y = pt.y;
+					chessBoard.intChessBoard[chessBoard.ALast.x][chessBoard.ALast.y] = -1;
 
-			//		pt = chessBoard.replayList.front();
-			//		chessBoard.replayList.pop_front();
-			//		chessBoard.BLast.x = pt.x;
-			//		chessBoard.BLast.y = pt.y;
-			//		chessBoard.intChessBoard[chessBoard.BLast.x][chessBoard.BLast.y] = -1;
+					pt = chessBoard.replayList.front();
+					chessBoard.replayList.pop_front();
+					chessBoard.BLast.x = pt.x;
+					chessBoard.BLast.y = pt.y;
+					chessBoard.intChessBoard[chessBoard.BLast.x][chessBoard.BLast.y] = -1;
 
-			//		pt = chessBoard.replayList.front();
-			//		chessBoard.replayList.pop_front();
-			//		chessBoard.ALast.x = pt.x;
-			//		chessBoard.ALast.y = pt.y;
-			//		chessBoard.intChessBoard[chessBoard.ALast.x][chessBoard.ALast.y] = -1;
-			//		chessBoard.intWhoPlay = 0;
+					pt = chessBoard.replayList.front();
+					chessBoard.replayList.pop_front();
+					chessBoard.ALast.x = pt.x;
+					chessBoard.ALast.y = pt.y;
+					chessBoard.intChessBoard[chessBoard.ALast.x][chessBoard.ALast.y] = -1;
+					chessBoard.intWhoPlay = 0;
 
-			//		InvalidateRect(hWnd,NULL,TRUE);
-			//		
-			//	}
-			//}
+					InvalidateRect(hWnd,NULL,TRUE);
+					
+				}
+			}
 			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -264,6 +269,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetClientSize(hWnd,480, 480);
 			int i = -1;
 			IniChessBoard(chessBoard);
+			if (ai != NULL)
+			{
+				delete ai;
+			}
+			ai = new AI();
 		}
 		break;
 	case WM_PAINT:
@@ -319,11 +329,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 							if(CheckWin(chessBoard.intChessBoard,chessBoard.intWhoPlay,x/width,y/height))
 							{
-								MessageBox(hWnd,"白方胜利","Yeah～",MB_OK);
+								MessageBox(hWnd,"白方胜利","厉害",MB_OK);
 								int wmId = IDM_FILE_SAVE;
 								chessBoard.intWhoPlay = 1;
 								SendMessage(hWnd,WM_COMMAND,(WPARAM)wmId,0); //保存一下
-								
+								if (ai != NULL)
+								{
+									delete ai;
+								}
+								ai = new AI();
 								//IniChessBoard(chessBoard);
 								//InvalidateRect(hWnd,NULL,TRUE);
 							}
@@ -354,7 +368,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			POINT pt;pt.x = chessBoard.ALast.x - 1; pt.y = chessBoard.ALast.y - 1;
 			Pos pos; pos.x = pt.x; pos.y = pt.y;
-			pos = ai.set(pos);
+			pos = ai->set(pos);
 			pt.x = pos.x + 1; pt.y = pos.y + 1;
 
 			hdc = GetDC(hWnd);
@@ -383,10 +397,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			
 			if(CheckWin(chessBoard.intChessBoard,chessBoard.intWhoPlay,pt.x,pt.y))
 			{	
-				if(IDOK == MessageBox(hWnd,"黑方胜利","想～",MB_OKCANCEL))
+				if(IDOK == MessageBox(hWnd,"黑方胜利","辣鸡",MB_OKCANCEL))
 				{
 					IniChessBoard(chessBoard);
 					InvalidateRect(hWnd,NULL,TRUE);
+					if (ai != NULL)
+					{
+						delete ai;
+					}
+					ai = new AI();
 				}
 			}
 			chessBoard.intWhoPlay = 0;

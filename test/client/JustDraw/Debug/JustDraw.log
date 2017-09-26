@@ -1,0 +1,60 @@
+﻿生成启动时间为 2017/9/4 15:39:38。
+     1>项目“D:\skynet\gobang-ai\test\client\JustDraw\JustDraw.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         D:\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\JustDraw.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         D:\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ai.cpp CheckWin.cpp chessboard.cpp JustDraw.cpp
+         JustDraw.cpp
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\chessboard.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\zobrist.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\globalstructs.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(302): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(313): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(314): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(315): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(316): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(365): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(376): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(377): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(378): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(379): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\justdraw.cpp(138): warning C4101: “hOldB”: 未引用的局部变量
+         chessboard.cpp
+     1>d:\skynet\gobang-ai\test\client\justdraw\chessboard.cpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\chessboard.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\zobrist.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\globalstructs.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         CheckWin.cpp
+     1>d:\skynet\gobang-ai\test\client\justdraw\checkwin.cpp(200): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+         ai.cpp
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\chessboard.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\zobrist.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\globalstructs.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(74): warning C4018: “<”: 有符号/无符号不匹配
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(84): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(105): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(162): warning C4018: “<”: 有符号/无符号不匹配
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(168): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(189): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(241): warning C4018: “<”: 有符号/无符号不匹配
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(269): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>d:\skynet\gobang-ai\test\client\justdraw\ai.cpp(313): warning C4018: “<”: 有符号/无符号不匹配
+         正在生成代码...
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe /l"0x0409" /nologo /fo"Debug\JustDraw.res" JustDraw.rc 
+       Link:
+         D:\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\skynet\gobang-ai\test\client\Debug\JustDraw.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\skynet\gobang-ai\test\client\Debug\JustDraw.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\skynet\gobang-ai\test\client\Debug\JustDraw.lib" /MACHINE:X86 Debug\JustDraw.res
+         Debug\ai.obj
+         Debug\CheckWin.obj
+         Debug\chessboard.obj
+         Debug\JustDraw.obj
+         Debug\stdafx.obj
+         JustDraw.vcxproj -> D:\skynet\gobang-ai\test\client\Debug\JustDraw.exe
+     1>已完成生成项目“D:\skynet\gobang-ai\test\client\JustDraw\JustDraw.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:06.86
